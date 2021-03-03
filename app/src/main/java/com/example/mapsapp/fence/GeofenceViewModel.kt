@@ -24,7 +24,7 @@ class GeofenceViewModel: ViewModel(), IGeofenceViewModel{
         factory = DaoFactory(view!!.getView()!!.context)
     }
 
-    override fun getFarms(farmerId: String?): List<FarmGeoPoint?>? {
+    override fun getFarms(farmerId: String?): List<FarmResponseBean?>? {
         return factory?.let { farmDataSource?.getFarmByFarmerId(farmerId, it) }
     }
 
@@ -103,7 +103,7 @@ class GeofenceViewModel: ViewModel(), IGeofenceViewModel{
                     displayFarmAreas()
                 } else {
                     Toast.makeText(
-                        view!!.getView()?.context,
+                        view!!.getView()?.getContext(),
                         "Error! while deleting farm area",
                         Toast.LENGTH_SHORT
                     ).show()

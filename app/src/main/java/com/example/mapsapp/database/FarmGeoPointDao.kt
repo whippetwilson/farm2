@@ -6,8 +6,8 @@ import com.example.mapsapp.fence.model.FarmGeoPoint
 
 @Dao
 interface FarmGeoPointDao {
-    @Query("SELECT * FROM FarmGeoPoints")
-    fun getAll(): List<FarmGeoPoint>
+    @Query("SELECT * FROM FarmGeoPoints where farmId = :farmId")
+    fun getAll(farmId: String): List<FarmGeoPoint>
 
     @Query("SELECT * FROM FarmGeoPoints WHERE id = :userId")
     fun getLiveData(userId: Int): LiveData<List<FarmGeoPoint>>

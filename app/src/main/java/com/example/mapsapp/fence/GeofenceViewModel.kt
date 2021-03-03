@@ -4,6 +4,7 @@ import android.app.ProgressDialog
 import android.os.AsyncTask
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import com.datatools.applybpo.data.database.DaoFactory
 import com.example.mapsapp.fence.Utils.Companion.FARMER_ID_ARG
 import com.example.mapsapp.fence.model.FarmGeoPoint
 import com.example.mapsapp.fence.model.FarmPostBean
@@ -15,14 +16,16 @@ import com.google.maps.android.SphericalUtil
 class GeofenceViewModel: ViewModel(), IGeofenceViewModel{
     private var view: IGeofenceFragment? = null
     private var farmDataSource: IFarmDataSource? = null
+    private var factory: DaoFactory? = null
 
     override fun attachView(view: IGeofenceFragment?) {
         this.view = view
         farmDataSource = FarmDataSource()
+        factory = DaoFactory(view!!.getView()!!.context)
     }
 
-    override fun getFarms(farmerId: String?): List<FarmResponseBean?>? {
-        return farmDataSource?.getFarmByFarmerId(farmerId)
+    override fun getFarms(farmerId: String?): List<FarmGeoPoint?>? {
+        return factory?.let { farmDataSource?.getFarmByFarmerId(farmerId, it) }
     }
 
     override fun displayFarmAreas() {
@@ -64,12 +67,15 @@ class GeofenceViewModel: ViewModel(), IGeofenceViewModel{
                     )
                 )
             }
-            val status = farmDataSource?.saveFarmArea(
-                FarmPostBean(
-                    points, SphericalUtil.computeArea(polygon.toMutableList()),
-                    view?.getArguments()?.getString(FARMER_ID_ARG)
+            val status = factory?.let {
+                farmDataSource?.saveFarmArea(
+                    FarmPostBean(
+                        points, SphericalUtil.computeArea(polygon.toMutableList()),
+                        view?.getArguments()?.getString(FARMER_ID_ARG)
+                    ),
+                    it
                 )
-            )
+            }
             view?.runOnUiThread {
                 view!!.toggleProgressDialog(dialog, false)
                 if (status != null) {
@@ -90,14 +96,14 @@ class GeofenceViewModel: ViewModel(), IGeofenceViewModel{
         val dialog = ProgressDialog(view!!.getView()?.getContext())
         view!!.toggleProgressDialog(dialog, true)
         AsyncTask.execute {
-            val status = farmDataSource?.deleteFarmArea(farmId)
+            val status = factory?.let { farmDataSource?.deleteFarmArea(farmId, it) }
             view!!.runOnUiThread {
                 view!!.toggleProgressDialog(dialog, false)
                 if (status != null) {
                     displayFarmAreas()
                 } else {
                     Toast.makeText(
-                        view!!.getView()?.getContext(),
+                        view!!.getView()?.context,
                         "Error! while deleting farm area",
                         Toast.LENGTH_SHORT
                     ).show()

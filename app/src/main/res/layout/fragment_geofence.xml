@@ -1,14 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fence.GeofenceFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        tools:context=".farmers.farmgeofence.FarmGeofenceFragment">
 
-</FrameLayout>
+    </androidx.fragment.app.FragmentContainerView>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_margin="30dp"
+        android:padding="10dp"
+        android:layout_gravity="bottom|end"
+        android:clickable="true"
+        android:focusable="true">
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:id="@+id/draw_polygon"
+            app:srcCompat="@android:drawable/ic_menu_add"
+            android:layout_marginBottom="5dp"
+            android:layout_marginTop="20dp"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/map_out_your_farm"
+            android:textSize="15sp"
+            android:gravity="center"
+            android:textColor="@color/black_overlay"
+            android:layout_gravity="center"
+            android:textStyle="bold"/>
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

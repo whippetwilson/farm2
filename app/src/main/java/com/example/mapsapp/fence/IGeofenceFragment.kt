@@ -9,7 +9,7 @@ import com.google.android.gms.maps.model.LatLng
 
 interface IGeofenceFragment {
     fun getView(): View?
-    fun runOnUiThread(runnable: Runnable?)
+    fun runOnUiThread(runnable: () -> Unit)
     fun getViewLifecycleOwner(): LifecycleOwner?
     fun displayFarmArea(geofence: List<Map<Int?, List<LatLng?>?>?>?)
     fun getArguments(): Bundle?

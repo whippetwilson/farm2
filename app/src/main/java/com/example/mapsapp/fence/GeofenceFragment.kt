@@ -6,7 +6,6 @@ import android.Manifest.permission.ACCESS_FINE_LOCATION
 import android.annotation.SuppressLint
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
-import android.app.Dialog
 import android.app.ProgressDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -140,9 +139,9 @@ class GeofenceFragment : Fragment(), IGeofenceFragment, GoogleMap.OnPolygonClick
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE && data != null) {
             val dataModel: DataModel = data.extras!!.getParcelable(MapsActivity.POINTS)!!
-            val points: Array<LatLng> = dataModel.getPoints()
+            val points: Array<LatLng?> = dataModel.getPoints()
             val farmId = polygonFarmId
-            mViewModel.saveFarmArea(points, farmId)
+            mViewModel?.saveFarmArea(points, farmId)
             polygonFarmId = 0
         }
     }
@@ -196,7 +195,7 @@ class GeofenceFragment : Fragment(), IGeofenceFragment, GoogleMap.OnPolygonClick
         polygon.fillColor = fillColor
     }
 
-    override fun runOnUiThread(runnable: Runnable?) {
+    override fun runOnUiThread(runnable: () -> Unit) {
         requireActivity().runOnUiThread(runnable)
     }
 
@@ -228,10 +227,10 @@ class GeofenceFragment : Fragment(), IGeofenceFragment, GoogleMap.OnPolygonClick
 
     override fun toggleProgressDialog(dialog: ProgressDialog?, show: Boolean) {
         if (show) {
-            dialog.setMessage("Loading....")
-            dialog.show()
+            dialog?.setMessage("Loading....")
+            dialog?.show()
         } else {
-            dialog.dismiss()
+            dialog?.dismiss()
         }
     }
 
@@ -256,16 +255,16 @@ class GeofenceFragment : Fragment(), IGeofenceFragment, GoogleMap.OnPolygonClick
                         AlertDialog.Builder(requireActivity())
                             .setMessage("You're about to delete farm boundaries.\nPlease confirm.")
                             .setPositiveButton(
-                                "Confirm",
-                                { dialogInterface1, i1 ->
-                                    mViewModel?.deleteFarmArea(
-                                        Objects.requireNonNull(polygon.tag).toString()
-                                            .toInt()
-                                    )
-                                })
+                                "Confirm"
+                            ) { dialogInterface1, i1 ->
+                                mViewModel?.deleteFarmArea(
+                                    Objects.requireNonNull(polygon.tag).toString()
+                                        .toInt()
+                                )
+                            }
                             .setNegativeButton(
-                                "Cancel",
-                                { dialogInterface12, i12 -> dialogInterface12.dismiss() })
+                                "Cancel"
+                            ) { dialogInterface12, i12 -> dialogInterface12.dismiss() }
                             .show()
                     }
                 }
